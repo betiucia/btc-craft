@@ -1,0 +1,336 @@
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Cedarville+Cursive&display=swap');
+
+h2 {
+    font-family: 'Special Elite', cursive;
+    font-size: 28px;
+    color: #3b2f2f;
+    border-bottom: 1px dotted #a98b73;
+}
+
+ul,
+p,
+li {
+    font-family: 'Cedarville Cursive', cursive;
+    font-size: 18px;
+    color: #2f2f2f;
+}
+
+button {
+    font-family: 'Special Elite', cursive;
+    background-color: #8b5e3c;
+    color: #fff8dc;
+    border: 0.2vh solid #5c3a1e;
+    padding: 0.7vh 1.5vw;
+    border-radius: 0.6vh;
+    cursor: pointer;
+    box-shadow: 0.2vw 0.2vh #5c3a1e;
+    transition: transform 0.1s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
+    background-color: #a2693f;
+}
+
+body {
+    margin: 0;
+    background: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: 'Georgia', serif;
+    /* Prevent text selection during page drag/animation */
+    user-select: none;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+ */
+}
+
+.book-container {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url('images/bg.png');
+    background-size: 115% 73%;
+    background-position: center;
+    position: relative;
+    background-repeat: no-repeat;
+    perspective: 2000px; /* Needs perspective for 3D transforms */
+}
+
+.page a {
+    color: #000;
+    text-decoration: underline;
+    pointer-events: auto; /* Allow interaction with links */
+}
+
+
+.page {
+    width: 20vw;
+    height: 50vh;
+    padding: 8vh 5vw;
+    overflow-y: auto;
+    position: relative;
+    background-size: cover;
+    background-repeat: no-repeat;
+    z-index: 1;
+    /* Base styles, transform-style might be needed if nesting 3d elements */
+    transform-style: preserve-3d;
+    /* Helps with potential rendering glitches during transform */
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* Combine duplicate .page rule */
+.page {
+    padding-top: 11vh;
+    padding-bottom: 11vh;
+    padding-left: 4vw;
+    padding-right: 4vw;
+    scrollbar-width: none;          /* Firefox */
+    -ms-overflow-style: none;       /* Internet Explorer/Edge antigo */
+}
+.page::-webkit-scrollbar {
+    display: none;                  /* Chrome, Safari e Edge moderno */
+}
+
+
+.left-page::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* background-image: url('images/bg.png'); */ /* Example */
+    background-repeat: no-repeat;
+    background-size: 115% 110%;
+    background-position: right center;
+    z-index: -1; /* Put background behind content */
+    pointer-events: none;
+}
+
+.right-page {
+    position: relative;
+    background: none;
+}
+
+.right-page::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* background-image: url('images/bg3.png'); */ /* Example */
+    background-repeat: no-repeat;
+    background-size: 115% 110%;
+    background-position: left center;
+    z-index: -1; /* Put background behind content */
+    pointer-events: none;
+}
+
+/* Conteúdo da página fica por cima (z-index: 1 no .page já cuida disso) */
+/* .right-page > *,
+.left-page > * {
+    position: relative;
+    z-index: 1; // Redundant if .page has z-index 1 and ::before has -1
+} */
+
+.page-turn {
+    position: absolute;
+    top: 50%;
+    font-size: 2em;
+    color: #8b4513;
+    cursor: pointer;
+    user-select: none;
+    z-index: 10; /* Ensure buttons are above static pages */
+}
+
+#prevPage { /* This seems unused based on JS, using click zones instead */
+    left: 1vw;
+    transform: translateY(-50%);
+}
+
+#nextPage { /* This seems unused based on JS, using click zones instead */
+    right: 1vw;
+    transform: translateY(-50%);
+}
+
+.page-turn-animation,
+.page-turn-back-animation {
+    /* Common styles for turning pages */
+    transform-origin: left center; /* Default for pageTurn, overridden for pageTurnBack */
+    z-index: 20; /* Make sure turning page is above static pages */
+    box-shadow: -5px 0px 15px rgba(0, 0, 0, 0.3); /* Start with shadow on left edge */
+    /* Add a timing function for smoother feel */
+    animation-timing-function: ease-in-out;
+}
+
+
+.page-turn-animation {
+    animation: pageTurn 0.7s forwards; /* Slightly longer duration */
+    transform-origin: left center;
+    box-shadow: -5px 0px 15px rgba(0, 0, 0, 0.3); /* Shadow for right page turning left */
+}
+
+.page-turn-back-animation {
+    animation: pageTurnBack 0.7s forwards; /* Slightly longer duration */
+    transform-origin: right center;
+     box-shadow: 5px 0px 15px rgba(0, 0, 0, 0.3); /* Shadow for left page turning right */
+}
+
+
+@keyframes pageTurn {
+    0% {
+        transform: rotateY(0deg) skewY(0deg);
+        opacity: 1;
+        box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    50% {
+        /* Apply skew at the midpoint */
+        transform: rotateY(-90deg) skewY(2deg); /* Positive skew for right page turning left */
+        opacity: 0.8; /* Less transparency in middle? */
+        box-shadow: -10px 0px 25px rgba(0, 0, 0, 0.4); /* More pronounced shadow */
+    }
+    100% {
+        transform: rotateY(-180deg) skewY(0deg);
+        opacity: 0;
+        box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.1); /* Fade shadow out */
+    }
+}
+
+@keyframes pageTurnBack {
+    0% {
+        transform: rotateY(-180deg) skewY(0deg);
+        opacity: 0;
+        box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    50% {
+        /* Apply opposite skew at the midpoint */
+        transform: rotateY(-90deg) skewY(-2deg); /* Negative skew for left page turning right */
+        opacity: 0.8;
+        box-shadow: 10px 0px 25px rgba(0, 0, 0, 0.4); /* More pronounced shadow */
+    }
+    100% {
+        transform: rotateY(0deg) skewY(0deg);
+        opacity: 1;
+        box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.recipe-actions {
+    margin-top: 1vh;
+    z-index: 100; /* Ensure UI elements are clickable */
+    position: relative;
+}
+
+.recipe-actions label {
+    font-size: 0.8em;
+    margin-right: 0.6vw;
+    font-family: 'Cedarville Cursive', cursive;
+    font-weight: bold;
+    color: #2f2f2f;
+}
+
+.recipe-actions input {
+    width: 4.44vw;
+    padding: 0.3vh;
+    font-size: 1.3vh;
+    font-family: 'Cedarville Cursive', cursive;
+    color: #2f2f2f;
+    border: 0.07vw solid #a98b73;
+    background-color: #fff8dc;
+    text-align: center;
+}
+
+.recipe-actions button {
+    padding: 0.6vh 1.2vw;
+    margin-left: 0.6vw;
+    background-color: #8b4513;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8em;
+    z-index: 101; /* Ensure button is above other elements */
+    position: relative;
+}
+
+.recipe-actions button:hover {
+    background-color: #a0522d;
+}
+
+.recipe-info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5vw;
+    align-items: center;
+}
+
+.recipe-info-row p {
+    margin: 0;
+}
+
+.page-click-zone {
+    position: absolute;
+    top: 0;
+    width: 4vw; /* Increased width slightly */
+    height: 100%;
+    z-index: 50; /* Above static pages but below turning page */
+    cursor: pointer;
+    /* Optional: Add visual feedback for click zone */
+    /* background-color: rgba(255, 0, 0, 0.1); */
+}
+
+.page-click-zone.left {
+    left: 0;
+}
+
+.page-click-zone.right {
+    right: 0;
+}
+
+.book-container ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.summary-link {
+    display: flex;
+    justify-content: space-between;
+    text-decoration: none !important;
+    font-weight: bold;
+    color: #5a3b2e;
+    border-bottom: 0.1vw dotted #a98b73;
+    padding: 0.4vh 0;
+    /* Ensure links are clickable within page */
+    position: relative;
+    z-index: 2;
+}
+
+.summary-link:hover {
+    color: #8b5e3c;
+}
+
+
+.icon-style {
+    color: #472c17;
+    margin-right: 0.625vw;
+    font-size: 0.9375vw;
+}
+
+.ingredient-image {
+    width: 1.875vw;
+    height: 1.875vw;
+    margin-right: 1.25vw;
+    vertical-align: middle;
+    /* Improve image rendering quality */
+    image-rendering: -webkit-optimize-contrast; /* Older Chrome, Safari */
+    image-rendering: crisp-edges; /* Newer Chrome, Firefox */
+}
+
+.ingredient-title-image {
+    width: 3.75vw;
+    height: 3.75vw;
+    margin-right: 1.25vw;
+    vertical-align: middle;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
