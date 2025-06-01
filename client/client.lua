@@ -5,13 +5,6 @@ local managedProps = {} -- Tabela para gerenciar props: key = tableId, value = p
 local currentOpenedCraftTable = nil
 
 -- [[ Funções Auxiliares para Props por Proximidade ]]
-RegisterCommand('arminha', function()
-    TriggerEvent("vorp_inventory:Client:OnInvStateChange", true)
-end)
-
-RegisterCommand('arminha2', function()
-    BtcCore.framework.setInvNoBusy()
-end)
 
 local function CreatePropForTable(tableId, tableData)
     if not tableData.prop_model or managedProps[tableId] then return end -- Só cria se tiver modelo e não estiver já gerenciado
