@@ -40,6 +40,7 @@ AddEventHandler('btc-craft:removeItems', function(recipe, quantity)
                     local itemType = item.type or 'item'
                     local itemAdd = BtcCore.framework.addItem(src, useItem, amount, itemType)
                     local itemLabel = BtcCore.framework.getItemLabel(useItem, itemType)
+                    Webhook(src, locale[6], 'x'..amount..' '..itemLabel)
                     if not itemAdd then
                         Notify(locale[2] .. ' ' .. itemLabel, 5000, "error", src)
                         TriggerClientEvent('btc-craft:setCrafting', src)
